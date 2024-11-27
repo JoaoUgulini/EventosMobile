@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2d49a1"
+    tools:context=".TelaCadLocal">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cadastramento de Locais de Eventos"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:id="@+id/txtNomeLocal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nome do Local:"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/edtNomeLocal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Digite o nome do local"
+        android:backgroundTint="#cc40ab"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        app:layout_constraintTop_toBottomOf="@+id/txtNomeLocal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/txtEndereco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Endereço:"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtNomeLocal"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/edtEndereco"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Digite o endereço"
+        android:backgroundTint="#cc40ab"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        app:layout_constraintTop_toBottomOf="@+id/txtEndereco"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/txtCapacidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capacidade Máxima:"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtEndereco"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/edtCapacidade"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Digite a capacidade máxima"
+        android:backgroundTint="#cc40ab"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        app:layout_constraintTop_toBottomOf="@+id/txtCapacidade"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/btLocalCad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#8d44a7"
+        android:text="Cadastrar Local"
+        android:textColor="#ffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtCapacidade"
+        android:layout_marginTop="24dp" />
+
+    <Button
+        android:id="@+id/btRetornoLocal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retornar"
+        android:backgroundTint="#8d44a7"
+        android:textColor="#ffffff"
+        app:layout_constraintTop_toBottomOf="@+id/btLocalCad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+</android.support.constraint.ConstraintLayout>

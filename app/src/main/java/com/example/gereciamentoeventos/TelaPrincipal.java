@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class TelaPrincipal extends AppCompatActivity {
-
+    private int userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,11 +16,13 @@ public class TelaPrincipal extends AppCompatActivity {
 
         Button btReservarEvento = (Button) findViewById(R.id.btReservarEvento);
         Button btCadastrarLocal = (Button) findViewById(R.id.btCadastrarLocal);
+        userId = getIntent().getIntExtra("userId", -1);
 
         btReservarEvento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), TelaReservaEvento.class);
+                i.putExtra("userId", userId);
                 startActivity(i);
             }
         });

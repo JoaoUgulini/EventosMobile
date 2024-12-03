@@ -49,7 +49,7 @@ public class TelaCadastro extends AppCompatActivity {
         @Override
         protected String doInBackground(String... arg0) {
             try {
-                String url = "http://200.132.172.204/eventos/cadastra_usuario.php";
+                String url = "http://192.168.3.221/eventos/cadastra_usuario.php";
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("nome", usrtemp.getNome());
                 jsonValores.put("senha", usrtemp.getSenha());
@@ -65,21 +65,17 @@ public class TelaCadastro extends AppCompatActivity {
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
 
-            // Log para verificar a resposta exata do servidor
             System.out.println("Resposta recebida da API: " + resultado);
 
             if (resultado != null) {
-                if (resultado.trim().contains("sucesso")) { // Ajuste dependendo do formato real do retorno
-                    // Redireciona para MainActivity
+                if (resultado.trim().contains("sucesso")) {
                     Intent intent = new Intent(TelaCadastro.this, MainActivity.class);
                     startActivity(intent);
-                    finish(); // Finaliza TelaCadastro
+                    finish();
                 } else {
-                    // Exibe mensagem de erro com o retorno da API
                     Toast.makeText(TelaCadastro.this, "Cadastro falhou: " + resultado, Toast.LENGTH_LONG).show();
                 }
             } else {
-                // Caso o resultado seja nulo
                 Toast.makeText(TelaCadastro.this, "Erro ao conectar ao servidor!", Toast.LENGTH_LONG).show();
             }
         }

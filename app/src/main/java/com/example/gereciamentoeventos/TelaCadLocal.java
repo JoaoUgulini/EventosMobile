@@ -66,7 +66,7 @@ public class TelaCadLocal extends AppCompatActivity {
         protected String doInBackground(Local... params) {
             Local local = params[0];
             try {
-                URL url = new URL("http://200.132.172.204/Eventos/cadastra_local.php");
+                URL url = new URL("http://192.168.3.221/Eventos/cadastra_local.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");

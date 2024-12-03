@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     EditText edtlogin,edtsenha;
     String login="";
     String senha="";
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +51,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... arg0) {
             try {
-                String url = "http://200.132.172.204//Eventos/consulta_login.php";
+                String url = "http://192.168.3.221/Eventos/consulta_login.php";
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("login", edtlogin.getText().toString());
                 jsonValores.put("senha", edtsenha.getText().toString());
+
                 conexaouniversal mandar = new conexaouniversal();
                 String mensagem=mandar.postJSONObject(url,jsonValores);
 
@@ -64,11 +66,14 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonitem=jsonvet.getJSONObject(i);
                         login=jsonitem.optString("nome").toString();
                         senha=jsonitem.optString("senha").toString();
+                        userId = jsonitem.optInt("id");
                     }
                     if ((edtlogin.getText().toString().equals(login))&&(edtsenha.getText().toString().equals(senha)))
                     {
                         Intent i = new Intent(getApplicationContext(), TelaPrincipal.class);
+                        i.putExtra("userId", userId);
                         startActivity(i);
+
                     }
 
                 }catch (Exception ex){

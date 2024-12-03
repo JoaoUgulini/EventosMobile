@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,10 +14,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -28,30 +30,67 @@ import java.util.Locale;
 
 public class TelaReservaEvento extends AppCompatActivity {
 
-    Spinner spinnerLocais;
-    Button btRetornoReserva, btReserva;
-    EditText edtHora, edtData;
+    private Spinner spinnerLocais;
+    private Button btRetornoReserva, btReserva;
+    private EditText edtHora, edtData;
+    private int userId; // ID do usuário recebido na intent
+    private ArrayList<Integer> idLocais; // Lista para armazenar os IDs dos locais
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tela_reserva_evento);
 
+        // Inicializa componentes
         btRetornoReserva = findViewById(R.id.btRetornoReserva);
         btReserva = findViewById(R.id.btReserva);
         edtHora = findViewById(R.id.edtHora);
         edtData = findViewById(R.id.edtData);
         spinnerLocais = findViewById(R.id.spinnerLocais);
 
-        new PreencheComboTask().execute("http://200.132.172.204/Eventos/getLocais.php");
+        // Recebe o ID do usuário da intent
+        userId = getIntent().getIntExtra("userId", -1);
 
+        // Inicializa lista para IDs dos locais
+        idLocais = new ArrayList<>();
+
+        // Preenche o Spinner com os locais via API
+        new PreencheComboTask().execute("http://192.168.3.221/Eventos/getLocais.php");
+
+        // Configura botão para retornar à tela principal
         btRetornoReserva.setOnClickListener(view -> {
-            Intent i = new Intent(getApplicationContext(), TelaPrincipal.class);
-            startActivity(i);
+            Intent intent = new Intent(getApplicationContext(), TelaPrincipal.class);
+            startActivity(intent);
         });
 
+        // Adiciona máscaras de formatação para os campos de data e hora
         addDateWatcher(edtData);
         addTimeWatcher(edtHora);
+
+        // Configura botão para registrar o evento
+        btReserva.setOnClickListener(view -> {
+            String data = edtData.getText().toString().trim();
+            String hora = edtHora.getText().toString().trim();
+            int selectedIndex = spinnerLocais.getSelectedItemPosition(); // Índice do local selecionado no Spinner
+
+            if (!data.isEmpty() && !hora.isEmpty() && selectedIndex >= 0) {
+                try {
+                    // Valida a data no formato DD/MM/YYYY
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    sdf.parse(data);
+
+                    // Pega o ID do local selecionado
+                    int idLocalSelecionado = idLocais.get(selectedIndex);
+
+                    // Envia os dados para o servidor
+                    new EnviarEventoTask().execute(userId, idLocalSelecionado, data, hora);
+                } catch (ParseException e) {
+                    Toast.makeText(TelaReservaEvento.this, "Data inválida. Use o formato DD/MM/AAAA.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(TelaReservaEvento.this, "Preencha todos os campos e selecione um local.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void addDateWatcher(EditText editText) {
@@ -127,6 +166,7 @@ public class TelaReservaEvento extends AppCompatActivity {
         });
     }
 
+    // AsyncTask para preencher o Spinner com dados da API
     private class PreencheComboTask extends AsyncTask<String, Void, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... urls) {
@@ -148,18 +188,16 @@ public class TelaReservaEvento extends AppCompatActivity {
                     }
                     reader.close();
 
-                    Log.d("PreencheComboTask", "Resposta da API: " + response);
-
                     JSONArray jsonArray = new JSONArray(response.toString());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject local = jsonArray.getJSONObject(i);
                         String nome = local.getString("nome");
-                        int capacidade = local.getInt("capacidade");
+                        int id = local.getInt("id");
 
-                        nomesLocais.add(nome + " (Capacidade: " + capacidade + ")");
+                        // Armazena o nome e o ID do local
+                        nomesLocais.add(nome);
+                        idLocais.add(id); // Adiciona o ID do local à lista
                     }
-                } else {
-                    Log.e("PreencheComboTask", "Erro na resposta: Código " + responseCode);
                 }
                 conn.disconnect();
             } catch (Exception e) {
@@ -179,7 +217,62 @@ public class TelaReservaEvento extends AppCompatActivity {
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerLocais.setAdapter(adapter);
             } else {
-                Toast.makeText(TelaReservaEvento.this, "Erro ao carregar dados", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TelaReservaEvento.this, "Erro ao carregar dados.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // AsyncTask para enviar os dados do evento ao servidor
+    private class EnviarEventoTask extends AsyncTask<Object, Void, String> {
+        @Override
+        protected String doInBackground(Object... params) {
+            int idUsuario = (int) params[0];
+            int idLocal = (int) params[1];
+            String data = (String) params[2];
+            String hora = (String) params[3];
+
+            try {
+                URL url = new URL("http://192.168.3.221/Eventos/cadastra_evento.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setDoOutput(true);
+
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("id_usuario", idUsuario);
+                jsonBody.put("id_local", idLocal);
+                jsonBody.put("data", data);
+                jsonBody.put("hora", hora);
+
+                OutputStream os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(jsonBody.toString().getBytes("UTF-8"));
+                os.flush();
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    return response.toString();
+                }
+            } catch (Exception e) {
+                Log.e("EnviarEventoTask", "Erro ao enviar evento: " + e.getMessage(), e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Toast.makeText(TelaReservaEvento.this, "Evento registrado com sucesso!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(TelaReservaEvento.this, "Erro ao registrar evento.", Toast.LENGTH_SHORT).show();
             }
         }
     }

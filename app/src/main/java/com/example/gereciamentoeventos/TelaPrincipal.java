@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class TelaPrincipal extends AppCompatActivity {
-    private int userId;
+    int userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

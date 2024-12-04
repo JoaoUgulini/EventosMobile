@@ -1,0 +1,8 @@
+
+{"nome":"Salao Azul","endereco":"Iffar","capacidade":100}
+{"nome_local":"Salao Azul","endereco":"Iffar","capacidade":100}
+{"nome_local":"Salao Azul","endereco":"Iffar","capacidade":100}
+
+{"nome_local":"Ginasio","endereco":"Iffar","capacidade":500}
+{"nome_local":"Lab 5","endereco":"CIET","capacidade":30}
+{"nome_local":"Lab 5","endereco":"CIET","capacidade":30}

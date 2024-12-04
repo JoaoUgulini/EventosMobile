@@ -11,10 +11,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 public class TelaCadLocal extends AppCompatActivity {
 
     EditText edtNomeLocal, edtEndereco, edtCapacidade;
@@ -34,9 +30,9 @@ public class TelaCadLocal extends AppCompatActivity {
         btLocalCad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nomeLocal = edtNomeLocal.getText().toString().trim();
-                String endereco = edtEndereco.getText().toString().trim();
-                String capacidadeStr = edtCapacidade.getText().toString().trim();
+                String nomeLocal = edtNomeLocal.getText().toString();
+                String endereco = edtEndereco.getText().toString();
+                String capacidadeStr = edtCapacidade.getText().toString();
 
                 if (nomeLocal.isEmpty() || endereco.isEmpty() || capacidadeStr.isEmpty()) {
                     Toast.makeText(TelaCadLocal.this, "Todos os campos são obrigatórios!", Toast.LENGTH_SHORT).show();
@@ -66,44 +62,24 @@ public class TelaCadLocal extends AppCompatActivity {
         protected String doInBackground(Local... params) {
             Local local = params[0];
             try {
-                URL url = new URL("http://192.168.3.221/Eventos/cadastra_local.php");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-                conn.setDoOutput(true);
+                String url = "http://200.132.172.204/Eventos/cadastra_local.php";
 
-                JSONObject json = new JSONObject();
-                json.put("nome", local.getNome_local());
-                json.put("endereco", local.getEndereco());
-                json.put("capacidade", local.getCapacidade());
+                JSONObject jsonValores = new JSONObject();
+                jsonValores.put("nome_local", local.getNome_local());
+                jsonValores.put("endereco", local.getEndereco());
+                jsonValores.put("capacidade", local.getCapacidade());
 
-                OutputStream os = conn.getOutputStream();
-                os.write(json.toString().getBytes("UTF-8"));
-                os.close();
+                return conexaouniversal.postJSONObject(url, jsonValores);
 
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    return "Local cadastrado com sucesso!";
-                } else {
-                    return "Erro ao cadastrar local: Código " + responseCode;
-                }
             } catch (Exception e) {
-                return "Erro na conexão: " + e.getMessage();
+                e.printStackTrace();
+                return "erro";
             }
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Toast.makeText(TelaCadLocal.this, result, Toast.LENGTH_LONG).show();
-
-            if (result.contains("sucesso")) {
-                edtNomeLocal.setText("");
-                edtEndereco.setText("");
-                edtCapacidade.setText("");
-            }
+        protected void onPostExecute(String resultado) {
+            super.onPostExecute(resultado);
         }
     }
 }

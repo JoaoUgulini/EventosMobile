@@ -51,14 +51,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... arg0) {
             try {
-                String url = "http://192.168.3.221/Eventos/consulta_login.php";
+                String url = "http://200.132.172.204/Eventos/consulta_login.php";
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("login", edtlogin.getText().toString());
                 jsonValores.put("senha", edtsenha.getText().toString());
-
                 conexaouniversal mandar = new conexaouniversal();
                 String mensagem=mandar.postJSONObject(url,jsonValores);
-
                 try{
                     JSONObject jsonobjc = new JSONObject(mensagem);
                     JSONArray jsonvet = jsonobjc.getJSONArray("usuario");

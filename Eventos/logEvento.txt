@@ -11,3 +11,17 @@
 {"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:05:00"}
 {"id_usuario":11,"id_local":1,"data":"2024-12-06","hora":"15:00:00"}
 {"id_usuario":11,"id_local":1,"data":"2024-12-06","hora":"12:00:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-31","hora":"22:00:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-31","hora":"22:00:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-30","hora":"04:59:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-07","hora":"17:59:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-07","hora":"17:59:00"}
+{"id_usuario":11,"id_local":0,"data":"2024-12-07","hora":"17:59:00"}
+{"id_usuario":11,"id_local":0,"data":"2025-12-09","hora":"15:02:00"}
+{"id_usuario":11,"id_local":0,"data":"2025-12-09","hora":"15:02:00"}
+{"id_usuario":11,"id_local":0,"data":"2025-12-09","hora":"15:02:00"}
+{"id_usuario":11,"id_local":0,"data":"2025-12-09","hora":"15:02:00"}
+{"id_usuario":11,"id_local":4,"data":"2025-06-02","hora":"15:35:00"}
+{"id_usuario":11,"id_local":4,"data":"2025-06-02","hora":"15:99:00"}
+{"id_usuario":11,"id_local":4,"data":"2025-06-02","hora":"15:59:00"}
+{"id_usuario":11,"id_local":9,"data":"2025-06-02","hora":"15:59:00"}

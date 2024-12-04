@@ -30,7 +30,7 @@ public class TelaReservaEvento extends AppCompatActivity {
     Spinner spinnerLocais;
     Button btRetornoReserva, btReserva;
     EditText edtHora, edtData;
-    int userId;
+    int userId, LocalId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,9 @@ public class TelaReservaEvento extends AppCompatActivity {
         edtData = findViewById(R.id.edtData);
         spinnerLocais = findViewById(R.id.spinnerLocais);
         userId = getIntent().getIntExtra("userId", -1);
+
         new PreencheComboTask().execute("http://200.132.172.204/Eventos/consulta_locais.php");
+
         btRetornoReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +60,8 @@ public class TelaReservaEvento extends AppCompatActivity {
         btReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new EnviajsonEvento().execute();
+                // Busca o ID do local selecionado e só então envia os dados.
+                new ConsultajsonIdLocal().execute();
             }
         });
     }
@@ -100,16 +103,6 @@ public class TelaReservaEvento extends AppCompatActivity {
         });
     }
 
-    public String getFormattedDate(String dateInput) {
-        String input = dateInput.replaceAll("[^\\d]", "");
-        if (input.length() == 8) {
-            String formattedDate = input.substring(4, 8) + "-" + input.substring(2, 4) + "-" + input.substring(0, 2);
-            return formattedDate;
-        }
-        return "";
-    }
-
-
     private void addTimeWatcher(EditText editText) {
         editText.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -146,15 +139,42 @@ public class TelaReservaEvento extends AppCompatActivity {
         });
     }
 
-    public String getFormattedTime(String timeInput) {
-        String input = timeInput.replaceAll("[^\\d]", "");
-        if (input.length() == 4) {
-            String formattedTime = input.substring(0, 2) + ":" + input.substring(2, 4) + ":00";
-            return formattedTime;
-        }
-        return "";
-    }
+    class ConsultajsonIdLocal extends AsyncTask<Void, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            try {
+                String url = "http://200.132.172.204/Eventos/consulta_IDlocal.php";
+                JSONObject jsonValores = new JSONObject();
+                String nomeLocalSelecionado = spinnerLocais.getSelectedItem().toString();
+                nomeLocalSelecionado = nomeLocalSelecionado.split(" \\(")[0].trim();
+                jsonValores.put("nome_local", nomeLocalSelecionado);
 
+                conexaouniversal mandar = new conexaouniversal();
+                String resposta = mandar.postJSONObject(url, jsonValores);
+
+                if (resposta != null) {
+                    JSONObject jsonResponse = new JSONObject(resposta);
+
+                    if (jsonResponse.has("id")) {
+                        return jsonResponse.getInt("id");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return -1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer id) {
+            if (id != -1) {
+                LocalId = id; // Definir LocalId
+                new EnviajsonEvento().execute(); // Enviar evento após receber o ID
+            } else {
+                Toast.makeText(TelaReservaEvento.this, "ID do local não encontrado.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     class EnviajsonEvento extends AsyncTask<String, Void, String> {
         @Override
@@ -163,9 +183,10 @@ public class TelaReservaEvento extends AppCompatActivity {
                 String url = "http://200.132.172.204/eventos/cadastra_evento.php";
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("id_usuario", userId);
-                jsonValores.put("id_local", 1);
-                jsonValores.put("data", getFormattedDate(edtData.getText().toString())  );
-                jsonValores.put("hora", getFormattedTime(edtHora.getText().toString()) );
+                jsonValores.put("id_local", LocalId);  // Usa o ID correto
+                jsonValores.put("data", getFormattedDate(edtData.getText().toString()));
+                jsonValores.put("hora", getFormattedTime(edtHora.getText().toString()));
+
                 conexaouniversal mandar = new conexaouniversal();
                 return mandar.postJSONObject(url, jsonValores);
             } catch (Exception e) {
@@ -177,30 +198,27 @@ public class TelaReservaEvento extends AppCompatActivity {
         @Override
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
-        }
-
-        public String getPostDataString(JSONObject params) throws Exception {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            Iterator<String> itr = params.keys();
-
-            while (itr.hasNext()) {
-                String key = itr.next();
-                Object value = params.get(key);
-
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(key, "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-            }
-            return result.toString();
+            Toast.makeText(TelaReservaEvento.this, "Reserva efetuada com sucesso!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public String getFormattedDate(String dateInput) {
+        String input = dateInput.replaceAll("[^\\d]", "");
+        if (input.length() == 8) {
+            return input.substring(4, 8) + "-" + input.substring(2, 4) + "-" + input.substring(0, 2);
+        }
+        return "";
+    }
+
+    public String getFormattedTime(String timeInput) {
+        String input = timeInput.replaceAll("[^\\d]", "");
+        if (input.length() == 4) {
+            return input.substring(0, 2) + ":" + input.substring(2, 4) + ":00";
+        }
+        return "";
+    }
+
+
 
     private class PreencheComboTask extends AsyncTask<String, Void, ArrayList<String>> {
         @Override
@@ -239,3 +257,4 @@ public class TelaReservaEvento extends AppCompatActivity {
         }
     }
 }
+

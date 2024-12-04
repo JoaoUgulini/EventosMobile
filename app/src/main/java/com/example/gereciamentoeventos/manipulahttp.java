@@ -11,14 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-//    <uses-permission android:name="android.permission.INTERNET"/>
-//    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-// e colocar  <application
-//        ...
-//        android:usesCleartextTraffic="true"
-//        ...>
-//        ...
-//    </application>
 
 public class manipulahttp {
 
@@ -33,7 +25,6 @@ public class manipulahttp {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            // read the response
             InputStream in = new BufferedInputStream(conn.getInputStream());
             response = convertStreamToString(in);
         } catch (MalformedURLException e) {

@@ -1,0 +1,13 @@
+{"id_usuario":11,"id_local":1,"data_evento":"04\/12\/2024","hora_evento":"16:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"04\/12\/2024","hora_evento":"16:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"04\/12\/2024","hora_evento":"16:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"02122004","hora_evento":"1600"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-05","hora_evento":"20:00:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:00:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:00:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:00:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:01:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:05:00"}
+{"id_usuario":11,"id_local":1,"data_evento":"2024-12-04","hora_evento":"20:05:00"}
+{"id_usuario":11,"id_local":1,"data":"2024-12-06","hora":"15:00:00"}
+{"id_usuario":11,"id_local":1,"data":"2024-12-06","hora":"12:00:00"}

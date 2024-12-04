@@ -21,16 +21,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Iterator;
 
 public class TelaReservaEvento extends AppCompatActivity {
 
     Spinner spinnerLocais;
     Button btRetornoReserva, btReserva;
     EditText edtHora, edtData;
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +42,25 @@ public class TelaReservaEvento extends AppCompatActivity {
         edtHora = findViewById(R.id.edtHora);
         edtData = findViewById(R.id.edtData);
         spinnerLocais = findViewById(R.id.spinnerLocais);
-
-        new PreencheComboTask().execute("http://200.132.172.204/Eventos/getLocais.php");
-
-        btRetornoReserva.setOnClickListener(view -> {
-            Intent i = new Intent(getApplicationContext(), TelaPrincipal.class);
-            startActivity(i);
+        userId = getIntent().getIntExtra("userId", -1);
+        new PreencheComboTask().execute("http://200.132.172.204/Eventos/consulta_locais.php");
+        btRetornoReserva.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), TelaPrincipal.class);
+                startActivity(i);
+            }
         });
 
         addDateWatcher(edtData);
         addTimeWatcher(edtHora);
+
+        btReserva.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new EnviajsonEvento().execute();
+            }
+        });
     }
 
     private void addDateWatcher(EditText editText) {
@@ -91,6 +100,16 @@ public class TelaReservaEvento extends AppCompatActivity {
         });
     }
 
+    public String getFormattedDate(String dateInput) {
+        String input = dateInput.replaceAll("[^\\d]", "");
+        if (input.length() == 8) {
+            String formattedDate = input.substring(4, 8) + "-" + input.substring(2, 4) + "-" + input.substring(0, 2);
+            return formattedDate;
+        }
+        return "";
+    }
+
+
     private void addTimeWatcher(EditText editText) {
         editText.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -127,43 +146,80 @@ public class TelaReservaEvento extends AppCompatActivity {
         });
     }
 
+    public String getFormattedTime(String timeInput) {
+        String input = timeInput.replaceAll("[^\\d]", "");
+        if (input.length() == 4) {
+            String formattedTime = input.substring(0, 2) + ":" + input.substring(2, 4) + ":00";
+            return formattedTime;
+        }
+        return "";
+    }
+
+
+    class EnviajsonEvento extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... arg0) {
+            try {
+                String url = "http://200.132.172.204/eventos/cadastra_evento.php";
+                JSONObject jsonValores = new JSONObject();
+                jsonValores.put("id_usuario", userId);
+                jsonValores.put("id_local", 1);
+                jsonValores.put("data", getFormattedDate(edtData.getText().toString())  );
+                jsonValores.put("hora", getFormattedTime(edtHora.getText().toString()) );
+                conexaouniversal mandar = new conexaouniversal();
+                return mandar.postJSONObject(url, jsonValores);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "erro";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            super.onPostExecute(resultado);
+        }
+
+        public String getPostDataString(JSONObject params) throws Exception {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            Iterator<String> itr = params.keys();
+
+            while (itr.hasNext()) {
+                String key = itr.next();
+                Object value = params.get(key);
+
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(key, "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(value.toString(), "UTF-8"));
+            }
+            return result.toString();
+        }
+    }
+
     private class PreencheComboTask extends AsyncTask<String, Void, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... urls) {
             ArrayList<String> nomesLocais = new ArrayList<>();
             try {
-                URL url = new URL(urls[0]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    reader.close();
-
-                    Log.d("PreencheComboTask", "Resposta da API: " + response);
-
-                    JSONArray jsonArray = new JSONArray(response.toString());
+                manipulahttp httpHandler = new manipulahttp();
+                String resposta = httpHandler.requisitaservico(urls[0]);
+                if (resposta != null) {
+                    JSONArray jsonArray = new JSONArray(resposta);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject local = jsonArray.getJSONObject(i);
                         String nome = local.getString("nome");
                         int capacidade = local.getInt("capacidade");
-
                         nomesLocais.add(nome + " (Capacidade: " + capacidade + ")");
                     }
                 } else {
-                    Log.e("PreencheComboTask", "Erro na resposta: Código " + responseCode);
                 }
-                conn.disconnect();
             } catch (Exception e) {
-                Log.e("PreencheComboTask", "Erro na requisição: " + e.getMessage(), e);
             }
             return nomesLocais;
         }
@@ -173,8 +229,7 @@ public class TelaReservaEvento extends AppCompatActivity {
             if (!nomesLocais.isEmpty()) {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
                         TelaReservaEvento.this,
-                        android.R.layout.simple_spinner_item,
-                        nomesLocais
+                        android.R.layout.simple_spinner_item, nomesLocais
                 );
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerLocais.setAdapter(adapter);

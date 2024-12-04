@@ -64,24 +64,6 @@ public class TelaCadastro extends AppCompatActivity {
         @Override
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
-
-            // Log para verificar a resposta exata do servidor
-            System.out.println("Resposta recebida da API: " + resultado);
-
-            if (resultado != null) {
-                if (resultado.trim().contains("sucesso")) { // Ajuste dependendo do formato real do retorno
-                    // Redireciona para MainActivity
-                    Intent intent = new Intent(TelaCadastro.this, MainActivity.class);
-                    startActivity(intent);
-                    finish(); // Finaliza TelaCadastro
-                } else {
-                    // Exibe mensagem de erro com o retorno da API
-                    Toast.makeText(TelaCadastro.this, "Cadastro falhou: " + resultado, Toast.LENGTH_LONG).show();
-                }
-            } else {
-                // Caso o resultado seja nulo
-                Toast.makeText(TelaCadastro.this, "Erro ao conectar ao servidor!", Toast.LENGTH_LONG).show();
-            }
         }
 
         public String getPostDataString(JSONObject params) throws Exception {

@@ -2,3 +2,8 @@
 {"nome_local":"Espaço Cultural"}
 {"nome_local":"Espaço Cultural"}
 {"nome_local":"Lab 5"}
+{"nome_local":"Auditório Pequeno"}
+{"nome_local":"Ciet"}
+{"nome_local":"Ciet"}
+{"nome_local":"Ciet"}
+{"nome_local":"Lab 5"}

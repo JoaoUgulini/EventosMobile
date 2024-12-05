@@ -21,14 +21,38 @@
         android:layout_marginTop="24dp" />
 
     <TextView
-        android:id="@+id/txtLocalEvento"
+        android:id="@+id/txtNomeEvento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:text="Local do Evento:"
+        android:layout_marginTop="16dp"
+        android:text="Nome do Evento:"
         android:textColor="#ffffff"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView4" />
+
+    <EditText
+        android:id="@+id/edtNomeEvento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Digite o nome do evento"
+        android:backgroundTint="#cc40ab"
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toEndOf="@+id/txtNomeEvento"
+        app:layout_constraintTop_toTopOf="@+id/txtNomeEvento"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/txtLocalEvento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Local do Evento:"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtNomeEvento" />
 
     <Spinner
         android:id="@+id/spinnerLocais"

@@ -29,7 +29,7 @@ public class TelaReservaEvento extends AppCompatActivity {
 
     Spinner spinnerLocais;
     Button btRetornoReserva, btReserva;
-    EditText edtHora, edtData;
+    EditText edtHora, edtData, edtNomeEvento;
     int userId, LocalId;
 
     @Override
@@ -41,6 +41,7 @@ public class TelaReservaEvento extends AppCompatActivity {
         btReserva = findViewById(R.id.btReserva);
         edtHora = findViewById(R.id.edtHora);
         edtData = findViewById(R.id.edtData);
+        edtNomeEvento = findViewById(R.id.edtNomeEvento);
         spinnerLocais = findViewById(R.id.spinnerLocais);
         userId = getIntent().getIntExtra("userId", -1);
 
@@ -168,8 +169,8 @@ public class TelaReservaEvento extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer id) {
             if (id != -1) {
-                LocalId = id; // Definir LocalId
-                new EnviajsonEvento().execute(); // Enviar evento após receber o ID
+                LocalId = id;
+                new EnviajsonEvento().execute();
             } else {
                 Toast.makeText(TelaReservaEvento.this, "ID do local não encontrado.", Toast.LENGTH_SHORT).show();
             }
@@ -183,7 +184,8 @@ public class TelaReservaEvento extends AppCompatActivity {
                 String url = "http://200.132.172.204/eventos/cadastra_evento.php";
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("id_usuario", userId);
-                jsonValores.put("id_local", LocalId);  // Usa o ID correto
+                jsonValores.put("id_local", LocalId);
+                jsonValores.put("nome_evento", edtNomeEvento.getText().toString());
                 jsonValores.put("data", getFormattedDate(edtData.getText().toString()));
                 jsonValores.put("hora", getFormattedTime(edtHora.getText().toString()));
 

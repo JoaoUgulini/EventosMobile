@@ -63,7 +63,6 @@ public class TelaCadLocal extends AppCompatActivity {
             Local local = params[0];
             try {
                 String url = "http://200.132.172.204/Eventos/cadastra_local.php";
-
                 JSONObject jsonValores = new JSONObject();
                 jsonValores.put("nome_local", local.getNome_local());
                 jsonValores.put("endereco", local.getEndereco());

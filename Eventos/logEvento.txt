@@ -25,3 +25,8 @@
 {"id_usuario":11,"id_local":4,"data":"2025-06-02","hora":"15:99:00"}
 {"id_usuario":11,"id_local":4,"data":"2025-06-02","hora":"15:59:00"}
 {"id_usuario":11,"id_local":9,"data":"2025-06-02","hora":"15:59:00"}
+{"id_usuario":19,"id_local":5,"data":"2024-12-15","hora":"18:56:00"}
+{"id_usuario":-1,"id_local":11,"data":"2024-12-05","hora":"20:00:00"}
+{"id_usuario":-1,"id_local":11,"data":"2024-12-05","hora":"20:00:00"}
+{"id_usuario":20,"id_local":11,"data":"2024-12-24","hora":"15:00:00"}
+{"id_usuario":20,"id_local":9,"nome_evento":"Natal da ADS","data":"2024-12-24","hora":"23:00:00"}
